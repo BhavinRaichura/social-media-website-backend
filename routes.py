@@ -5,7 +5,7 @@ from flask_cors import CORS
 from sqlalchemy.sql import text, desc
 import jwt
 
-cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
+cors = CORS(app, resources={r"/*": {"origins": "*"}})
 # api -1 
 
 
@@ -23,14 +23,14 @@ def login():
             return token
         
         if(user):
-            print('exist ',user)
+            #print('exist ',user)
             token = gettoken(user.id)
             return jsonify({'email':email, 'userid':user.id, 'status':1, 'authtoken':token})
         
         user = User(name=name,email=email, image_url = image)
         db.session.add(user)
         db.session.commit()
-        print(user)
+        #print(user)
         token = gettoken(user.id)
         return jsonify({'email':email, 'userid':user.id, 'status':1,'authtoken':token})
     return jsonify({'status':0,'message':'insufficient data'})
@@ -58,8 +58,8 @@ def private_details(client, id):
             return jsonify({'status':1, 'userDetails' :  details, 'isFollowing':1, 'reqStatus':0 ,'isUser':0})
         req_obj = follow_requests.query.filter_by(req_by=client).filter_by(req_to=follows).first()
         if req_obj:
-            return  jsonify({'status':1, 'meessage':f"{client.name} doesn't follows {follows.name}" ,'userDetails':follows.basicDetails(), 'isFollowing':0, 'reqStatus':1,'isUser':0})
-        return  jsonify({'status':1, 'meessage':f"{client.name} doesn't follows {follows.name}" ,'userDetails':follows.basicDetails(), 'isFollowing':0, 'reqStatus':0,'isUser':0})
+            return  jsonify({'status':1, 'meessage':f"{client.name} doesn't follows {follows.name}" ,'userDetails':follows.profile(), 'isFollowing':0, 'reqStatus':1,'isUser':0})
+        return  jsonify({'status':1, 'meessage':f"{client.name} doesn't follows {follows.name}" ,'userDetails':follows.profile(), 'isFollowing':0, 'reqStatus':0,'isUser':0})
     return jsonify({'status':0, 'meessage':'user not found'})
 
 @app.route('/api/user/show-follow-requests')
@@ -69,7 +69,7 @@ def showFollowRequests(client):
     print('resuest by user ')
     print(list_of_resquests)
     return jsonify({'status':1,'results':list_of_resquests})
-    return {'results':1}
+    #return {'results':1}
     
 
 # api -10
